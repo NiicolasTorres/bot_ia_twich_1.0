@@ -13,7 +13,13 @@
         "tag":"edad",
         "patterns":["Cual es tu edad?", "cuantos años tenes?"],
         "responses": ["Mi edad es 29", "Tengo 29 años"]
+    },
+    {
+        "tag": "buscar_en_google",
+            "patterns": ["buscar que es "],
+            "responses": ["No tengo una respuesta, pero puedo buscar en Google para ti."]
     }
+    
 ]
 
 }

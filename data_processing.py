@@ -2,19 +2,23 @@ import json
 import pickle
 import spacy
 import random
+import json
 
 # Cargar el modelo de procesamiento de lenguaje natural de spaCy
 nlp = spacy.load("es_core_news_sm")
 
 def load_data(filename):
-    #Carga los datos de intenciones (intents) desde un archivo JSON
-    with open(filename, 'r') as file:
-        data = json.load(file)
-    return data
-
+    try:
+        # Carga los datos de intenciones (intents) desde un archivo JSON
+        with open(filename, 'r') as file:
+            data = json.load(file)
+        return data
+    except Exception as e:
+        print(f"Error al cargar el archivo {filename}: {e}")
+        return None
 
 def preprocess_data(intents):
-    #Realiza el preprocesamiento de datos de intenciones para entrenar el chatbot
+    # Realiza el preprocesamiento de datos de intenciones para entrenar el chatbot
     words = []
     classes = []
     documents = []
@@ -53,6 +57,5 @@ def preprocess_data(intents):
         output_row[classes.index(document[1])] = 1
         training.append([bag, output_row])
 
-    random.shuffle(training)
-
     return training, words, classes
+       
