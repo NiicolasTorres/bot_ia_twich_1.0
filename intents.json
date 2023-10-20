@@ -8,6 +8,11 @@
         "tag": "nombre",
         "patterns": ["cómo es tu nombre", "cómo te llamas"],
         "responses": ["Me llamo Juan Pablo", "Mi nombre es Juan Pablo"]
+    },
+    {
+        "tag":"edad",
+        "patterns":["Cual es tu edad?", "cuantos años tenes?"],
+        "responses": ["Mi edad es 29", "Tengo 29 años"]
     }
 ]
 

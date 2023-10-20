@@ -2,8 +2,7 @@ import random
 import json
 import pickle
 import numpy as np
-
-import nltk
+import spacy
 from nltk.stem import WordNetLemmatizer
 
 # Para crear la red neuronal
@@ -12,13 +11,9 @@ from keras.metrics import Accuracy
 from keras.layers import Dense, Activation, Dropout
 from keras.optimizers import SGD
 
-lemmatizer = WordNetLemmatizer()
+nlp = spacy.load("es_core_news_sm")
 
 intents = json.loads(open('intents.json').read())
-
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
 
 words = []
 classes = []
@@ -28,13 +23,14 @@ ignore_letters = ['?', '!', '¿', '.', ',']
 # Clasifica los patrones y las categorías
 for intent in intents['intents']:
     for pattern in intent['patterns']:
-        word_list = nltk.word_tokenize(pattern)
+        doc = nlp(pattern)
+        word_list = [token.lemma_ for token in doc if not token.is_punct]
         words.extend(word_list)
         documents.append((word_list, intent["tag"]))
         if intent["tag"] not in classes:
             classes.append(intent["tag"])
 
-words = [lemmatizer.lemmatize(word) for word in words if word not in ignore_letters]
+words = [word for word in words if word not in ignore_letters]
 words = sorted(set(words))
 
 pickle.dump(words, open('words.pkl', 'wb'))
@@ -42,13 +38,13 @@ pickle.dump(classes, open('classes.pkl', 'wb'))
 
 # Pasa la información a unos y ceros según las palabras presentes en cada categoría para hacer el entrenamiento
 training = []
-output_empty = [0]*len(classes)
+output_empty = [0] * len(classes)
 max_words = len(words)
 
 for document in documents:
-    bag = [0] * max_words  # Crear una lista de ceros de longitud igual a la cantidad de palabras
+    bag = [0] * max_words
     word_patterns = document[0]
-    word_patterns = [lemmatizer.lemmatize(word.lower()) for word in word_patterns]
+    word_patterns = [word.lower() for word in word_patterns]
     for word in word_patterns:
         if word in words:
             bag[words.index(word)] = 1
