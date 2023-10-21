@@ -1,26 +1,36 @@
-import chatbot
+import irc3
+from irc3 import IrcBot
+from irc3.plugins.command import command
+from irc3.plugins.cron import cron
 
-if __name__ == "__main__":
-    try:
-        # Cargar las intenciones y realizar el preprocesamiento de datos
-        intents = chatbot.load_data('intents.json')
-        training, words, classes = chatbot.preprocess_data(intents)
-        # Cargar el modelo del chatbot
-        model = chatbot.load_chatbot_model('chatbot_model.keras')
+@irc3.plugin
+class MyPlugin:
 
-        # Bucle principal para la conversación con el usuario
-        while True:
-            try:
-                message = input("Tú: ")
-                if message.lower() == 'exit':
-                    break
-                # Predecir la intención del mensaje y obtener una respuesta
-                intent = chatbot.predict_class(message, model, words, classes)
-                response = chatbot.get_response(intent, intents)
-                print(f"Bot: {response.encode('utf-8').decode('utf-8')}")
-            except Exception as e:
-                # Manejo de excepciones generales
-                print(f"Error: {e}")
-    except Exception as e:
-        # Manejo de excepciones generales
-        print(f"Error: {e}")
+    def __init__(self, bot):
+        self.bot = bot
+
+    # Evento para manejar la conexión
+    @irc3.event(irc3.rfc.CONNECTED)
+    def on_connected(self, **kwargs):
+        self.bot.join('#tu_canal')
+
+    # Comando para manejar mensajes
+    @command
+    def mensaje(self, mask, target, args):
+        # Reemplaza este ejemplo con tu lógica de procesamiento de mensajes
+        self.bot.privmsg(target, f'Recibido: {args}')
+
+def run_bot(config):
+    return IrcBot.from_config(config)
+
+if __name__ == '__main__':
+    # Configura y ejecuta el bot
+    config = {
+        'nick': 'AuthorityIQ',
+        'host': 'irc.twitch.tv',
+        'port': 6667,
+        'channels': ['#rolcrowley'],
+        'password': 'aGRGSjIxeZAVaPuZ6oOJ8pOq+oXuyVKHo4BkZoDKmxbg='  # Reemplaza con tu token de autenticación
+    }
+    bot = run_bot(config)
+    bot.run(forever=True)
