@@ -1,2 +1,6 @@
 .env
 myenv/
+.google-cookie
+chatbot_model.keras
+classes.pkl
+words.pkl
