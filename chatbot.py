@@ -8,6 +8,8 @@ from irc3 import IrcBot
 # Cargar el modelo de procesamiento de lenguaje natural de spaCy
 nlp = spacy.load("es_core_news_sm")
 
+# Definición de funciones y clase ChatBot
+
 def load_chatbot_model(model_filename):
     # Carga el modelo del chatbot a partir del archivo proporcionado.
     return load_model(model_filename)
@@ -98,4 +100,3 @@ def search_google(query):
     # Aquí deberías realizar la búsqueda en Google y obtener los resultados
     # Puedes usar la función que ya tienes para buscar en Google
     return search_results
-

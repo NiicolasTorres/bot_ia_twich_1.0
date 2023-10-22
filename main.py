@@ -1,7 +1,6 @@
 import irc3
 from irc3 import IrcBot
 from irc3.plugins.command import command
-from irc3.plugins.cron import cron
 
 @irc3.plugin
 class MyPlugin:
@@ -12,7 +11,7 @@ class MyPlugin:
     # Evento para manejar la conexión
     @irc3.event(irc3.rfc.CONNECTED)
     def on_connected(self, **kwargs):
-        self.bot.join('#tu_canal')
+        self.bot.join('#rolcrowley')
 
     # Comando para manejar mensajes
     @command
@@ -26,11 +25,12 @@ def run_bot(config):
 if __name__ == '__main__':
     # Configura y ejecuta el bot
     config = {
-        'nick': 'AuthorityIQ',
-        'host': 'irc.twitch.tv',
-        'port': 6667,
-        'channels': ['#rolcrowley'],
-        'password': 'aGRGSjIxeZAVaPuZ6oOJ8pOq+oXuyVKHo4BkZoDKmxbg='  # Reemplaza con tu token de autenticación
+        'nick': 'AuthorityIQ',  # Nombre de usuario de tu bot
+        'host': 'irc.twitch.tv',  # Servidor de Twitch
+        'port': 6667,  # Puerto de Twitch
+        'channels': ['#rolcrowley'],  # Canales a los que se unirá el bot
+        'password': 'aub8yd14ihwn26dgr37dy144539prj'  # Token de autenticación de tu bot
     }
     bot = run_bot(config)
     bot.run(forever=True)
+
