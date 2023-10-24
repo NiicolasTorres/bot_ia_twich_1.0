@@ -2,13 +2,13 @@ import random
 import numpy as np
 import spacy
 import json
+import irc3
 from keras.models import load_model
 from irc3 import IrcBot
+from data_processing import load_data, preprocess_data
 
 # Cargar el modelo de procesamiento de lenguaje natural de spaCy
 nlp = spacy.load("es_core_news_sm")
-
-# Definición de funciones y clase ChatBot
 
 def load_chatbot_model(model_filename):
     # Carga el modelo del chatbot a partir del archivo proporcionado.
@@ -53,7 +53,10 @@ class ChatBot(IrcBot):
         self.words = []
         self.classes = []
         self.model = load_chatbot_model(model_filename)
-        self.intents = self.load_intents(intents_filename)
+        self.intents = load_data(intents_filename)
+
+        if self.intents:
+            self.training, self.words, self.classes = preprocess_data(self.intents)
 
     @classmethod
     def reload(cls, module, target, k):
@@ -63,22 +66,25 @@ class ChatBot(IrcBot):
     def on_ready(self, **kwargs):
         self.join(self.channel)
 
-    @IrcBot.on("pubmsg")
-    def on_pubmsg(self, event, mask, target, data, **kwargs):
+    @irc3.event(irc3.rfc.PRIVMSG)
+    def on_privmsg(self, event, mask, target, data, **kwargs):
         message = data['message']
         if message.startswith('!exit'):
             self.die()
         else:
             self.respond_to_message(message)
 
-    def respond_to_message(self, message):
-        # Procesa y responde al mensaje recibido del chat de Twitch
+    def predict_intent(self, message):
+        return predict_class(message, self.model, self.words, self.classes)
 
-        # Tu lógica de procesamiento de mensajes aquí
-        intent = predict_class(message, self.model, self.words, self.classes)
+    def get_response(self, intent):
+        return get_response(intent, self.intents)
+
+    def respond_to_message(self, message):
+        intent = self.predict_intent(message)
 
         if intent == 'buscar_en_google' or intent == 'buscar_que_es_un_triangulo':
-            # Si la intención es buscar en Google, realizar la búsqueda
+            # Realiza la búsqueda en Google y obtén los resultados
             query = message  # Usar el mensaje del usuario como consulta de búsqueda
             search_results = search_google(query)
 
@@ -89,7 +95,7 @@ class ChatBot(IrcBot):
                 response = "Lo siento, no pude encontrar resultados en Google para tu consulta."
         else:
             # Si no es una búsqueda en Google, obtener una respuesta de las intenciones definidas
-            response = get_response(intent, self.intents)
+            response = self.get_response(intent)
 
         # Enviar la respuesta al chat de Twitch
         self.privmsg(self.channel, response)
@@ -100,3 +106,5 @@ def search_google(query):
     # Aquí deberías realizar la búsqueda en Google y obtener los resultados
     # Puedes usar la función que ya tienes para buscar en Google
     return search_results
+
+
