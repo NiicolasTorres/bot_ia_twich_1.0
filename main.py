@@ -26,11 +26,11 @@ def run_bot(config):
 if __name__ == '__main__':
     # Configura y ejecuta el bot
     config = {
-        'nick': 'AuthorityIQ',  # Nombre de usuario de tu bot
+        'nick': 'xxxxxxxxxxxx',  # Nombre de usuario de tu bot
         'host': 'irc.twitch.tv',  # Servidor de Twitch
         'port': 6667,  # Puerto de Twitch
-        'channels': ['#rolcrowley'],  # Canales a los que se unirá el bot
-        'password': 'oauth:9zrdlfrsce6iaaiwz2vsunbs5x3hin'  # Token de autenticación de tu bot
+        'channels': ['#xxxxxxxx'],  # Canales a los que se unirá el bot
+        'password': 'xxxxxxxxxxxxxxxxx'  # Token de autenticación de tu bot
     }
     bot = run_bot(config)
     chatbot = ChatBot(channel=config['channels'][0], nickname=config['nick'], server=config['host'], port=config['port'], model_filename='chatbot_model.keras', intents_filename='intents.json')
