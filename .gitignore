@@ -4,3 +4,4 @@ myenv/
 chatbot_model.keras
 classes.pkl
 words.pkl
+__pycache__/
